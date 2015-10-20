@@ -1,9 +1,6 @@
 'use strict';
 
 var React = require('react-native');
-var NotInvitedToHH = require('./NotInvitedToHH');
-var InvitedToHH = require('./InvitedToHH');
-var CreateNewHH = require('./CreateNewHH');
 
 var {
   StyleSheet,
@@ -14,46 +11,74 @@ var {
 } = React;
 
 var SignUp = React.createClass({
-  joinOrCreateHousehold: function() {
-    //if you are not in a household
-    this.props.navigator.push({
-      title: 'Create New HH',
-      component: CreateNewHH
-    })
 
-    //NOTE: need to receive data from the server re: if user was invited to HH or not
-    //if you are in a household
-    // this.props.navigator.push({
-    //   index: 4,
-    //   id: 'Invited'
-    // })
+  getInitialState() {
+    return {
+      username: '',
+      password: '',
+    };
   },
+
   render: function() {
     return (
       <View style={styles.container}>
-        <TextInput style={styles.input} placeholder='username' keyboardType='default'/>
-        <TextInput style={styles.input} placeholder='password' secureTextEntry='true'/>
+
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => this.setState({username: text})}
+          placeholder='username'
+          keyboardType='default'
+        />
+
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => this.setState({password: text})}
+          placeholder='password'
+          secureTextEntry={true}
+        />
+
         <TouchableHighlight
           style={styles.button}
-          onPress={() => this.joinOrCreateHousehold()}
+          onPress={this.submit}
         >
           <Text style={styles.btnText}>Sign Up</Text>
         </TouchableHighlight>
+
+        <Text> Already registered? </Text>
+
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.props.goToLogin}
+        >
+
+        <Text style={styles.btnText}>Log In</Text>
+
+        </TouchableHighlight>
+
       </View>
     );
-  }
+  },
+
+  submit() {
+    if (this.state.username === '' || this.state.password === '') {
+      return;
+    }
+
+    this.props.handleSignup({username: this.state.username, password: this.state.password});
+  },
+
 });
 
 var styles = StyleSheet.create({
   container: {
     marginTop: 64,
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   input: {
     height: 40,
     borderColor: 'gray',
-    borderWidth: 1
+    borderWidth: 1,
   },
   button: {
     height: 15,
@@ -61,12 +86,12 @@ var styles = StyleSheet.create({
     margin: 2,
     backgroundColor: 'black',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   btnText: {
     fontSize: 18,
-    color: 'white'
-  }
+    color: 'white',
+  },
 });
 
 module.exports = SignUp;
